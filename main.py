@@ -51,7 +51,7 @@ def mutate(chromosome):
     return chromosome
 
 def evolve(population):
-    survivors = [org[0] for org in sorted(population, key=itemgetter(1))[::-1][:int(len(population)/2)]]
+    survivors = [org[0] for org in sorted(population, key=itemgetter(1))[int(len(population)/2):]]
     shuffle(survivors)
 
     new_population = []
