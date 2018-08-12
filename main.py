@@ -113,7 +113,7 @@ def main(population):
         ssims = sorted(ssims, key=itemgetter(1))[::-1]
         print(f"Gen {gen}: {round(ssims[0][1], 5)}, {round(ssims[-1][1], 5)} (diff: {round(ssims[0][1]-ssims[-1][1], 5)})")
         population = evolve(ssims)
-        print(f"Gen {gen}: {round(ssims[0][1], 5)}, {round(ssims[-1][1], 5)} (diff: {round(ssims[0][1]-ssims[-1][1], 5)})")
+        #print(f"Gen {gen}: {round(ssims[0][1], 5)}, {round(ssims[-1][1], 5)} (diff: {round(ssims[0][1]-ssims[-1][1], 5)})")
 
     return ssims
 
