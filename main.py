@@ -51,8 +51,7 @@ def mutate(chromosome):
     return chromosome
 
 def evolve(population):
-    survivors = [org[0] for org in sorted(population, key=itemgetter(1))[int(len(population)/2):]]
-    shuffle(survivors)
+    survivors = [org[0] for org in sorted(population, key=itemgetter(1))[:int(len(population)/2)]]
 
     new_population = []
     for survivor in survivors:
@@ -60,6 +59,7 @@ def evolve(population):
         new.chromosome = survivor
         new_population.append(new)
 
+    shuffle(survivors)
     for i in range(0, len(survivors), 2):
         midpoint = randint(0, len(survivors[i]))
         new = Organism(genome_size)
@@ -106,12 +106,14 @@ def main(population):
         for org in population:
             img = np.copy(blank)
             rectangles = assemble_from_chromosome(org.chromosome)
-            org.image = create_image(rectangles, blank)
-            ssims.append((org.chromosome, (ssim(source, img, multichannel=True)/2)+0.5,))
+            org.image = create_image(rectangles, img)
+            img_ssim = (ssim(source, org.image, multichannel=True)/2)+0.5
+            ssims.append((org.chromosome, img_ssim))
 
         ssims = sorted(ssims, key=itemgetter(1))[::-1]
-        print(f"Gen {gen}: {round(ssims[0][1], 5)} (diff: {round(ssims[0][1]-ssims[-1][1], 5)})")
+        print(f"Gen {gen}: {round(ssims[0][1], 5)}, {round(ssims[-1][1], 5)} (diff: {round(ssims[0][1]-ssims[-1][1], 5)})")
         population = evolve(ssims)
+        print(f"Gen {gen}: {round(ssims[0][1], 5)}, {round(ssims[-1][1], 5)} (diff: {round(ssims[0][1]-ssims[-1][1], 5)})")
 
     return ssims
 
@@ -120,8 +122,7 @@ blank = np.zeros((source.shape[0],source.shape[1],3), np.uint8)
 blank[:] = (255,255,255)
 mutation_chance = 5
 genome_size = 40
-population_size = 40
-
+population_size =  40
 population = init(population_size, genome_size)
 ssims = main(population)
 
