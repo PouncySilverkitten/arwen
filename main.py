@@ -10,7 +10,7 @@ class Organism:
 
         self.chromosome = ""
 
-        for _ in chromosome_length:
+        for _ in range(chromosome_length):
             self.chromosome += format(randint(0, 512),'b').zfill(16)
             self.chromosome += format(randint(0, 512),'b').zfill(16)
             self.chromosome += format(randint(0, 512),'b').zfill(16)
