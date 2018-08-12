@@ -5,31 +5,20 @@ from random import randint
 from skimage.measure import compare_ssim as ssim
 from operator import itemgetter
 
-class Rectangle:
-    def __init__(self):
-        self.point_one = (randint(0, 513), randint(0, 513))
-        self.point_two = (randint(0, 513), randint(0, 513))
-        self.colour = (randint(0,255), randint(0, 255), randint(0, 255),)
-        self.alpha = randint(0,255)
-
 class Organism:
     def __init__(self, chromosome_length):
-        self.rectangles = []
-
-        for _ in range(chromosome_length):
-            self.rectangles.append(Rectangle())
 
         self.chromosome = ""
 
-        for rectangle in self.rectangles:
-            self.chromosome += format(rectangle.point_one[0],'b').zfill(16)
-            self.chromosome += format(rectangle.point_one[1],'b').zfill(16)
-            self.chromosome += format(rectangle.point_two[0],'b').zfill(16)
-            self.chromosome += format(rectangle.point_two[1],'b').zfill(16)
-            self.chromosome += format(rectangle.colour[0],'b').zfill(16)
-            self.chromosome += format(rectangle.colour[1],'b').zfill(16)
-            self.chromosome += format(rectangle.colour[2],'b').zfill(16)
-            self.chromosome += format(rectangle.alpha,'b').zfill(16)
+        for _ in chromosome_length:
+            self.chromosome += format(randint(0, 512),'b').zfill(16)
+            self.chromosome += format(randint(0, 512),'b').zfill(16)
+            self.chromosome += format(randint(0, 512),'b').zfill(16)
+            self.chromosome += format(randint(0, 512),'b').zfill(16)
+            self.chromosome += format(randint(0, 255),'b').zfill(16)
+            self.chromosome += format(randint(0, 255),'b').zfill(16)
+            self.chromosome += format(randint(0, 255),'b').zfill(16)
+            self.chromosome += format(randint(0, 255),'b').zfill(16)
 
 
 def evolve(population):
