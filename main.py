@@ -63,6 +63,19 @@ def evolve(population):
 
     return new_population 
 
+def init(population_size, genome_size):
+    source = cv2.resize(cv2.imread('input.jpg'), (0,0), fx=0.25, fy=0.25)
+    blank = np.zeros((source.shape[0],source.shape[1],3), np.uint8)
+    blank[:] = (255,255,255)
+
+    population = []
+
+    mutation_chance = 8
+    for _ in range(population_size):
+        population.append(Organism(genome_size)) 
+
+    return population   
+
 def main(population):
     for gen in range(1000):
         ssims = []
@@ -84,19 +97,9 @@ def main(population):
             ssims.append((org.chromosome, (ssim(source, img, multichannel=True)/2)+0.5,))
 
         ssims = sorted(ssims, key=itemgetter(1))[::-1]
-        print(ssims[0][1])    
+        print(f"Gen {gen}: {round(ssims[0][1], 5)}")    
         population = evolve(ssims)
 
 
-source = cv2.resize(cv2.imread('input.jpg'), (0,0), fx=0.25, fy=0.25)
-
-blank = np.zeros((source.shape[0],source.shape[1],3), np.uint8)
-blank[:] = (255,255,255)
-
-population = []
-population_size = 40
-mutation_chance = 8
-for _ in range(population_size):
-    population.append(Organism(40))
-
+population = init(40,40)
 main(population)
