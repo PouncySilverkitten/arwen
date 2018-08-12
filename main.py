@@ -65,7 +65,6 @@ def evolve(population):
 
 def init(population_size, genome_size):
     population = []
-    mutation_chance = 8
     for _ in range(population_size):
         population.append(Organism(genome_size)) 
 
@@ -100,4 +99,5 @@ population = init(40,40)
 source = cv2.resize(cv2.imread('input.jpg'), (0,0), fx=0.25, fy=0.25)
 blank = np.zeros((source.shape[0],source.shape[1],3), np.uint8)
 blank[:] = (255,255,255)
+mutation_chance = 8
 main(population)
