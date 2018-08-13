@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-from random import randint, shuffle
+from random import randint, shuffle, choice
 from skimage.measure import compare_ssim as ssim
 from operator import itemgetter
 
@@ -44,31 +44,27 @@ class Organism:
             self.chromosome += format(rectangle.alpha,'b').zfill(16)
 
 def mutate(chromosome):
-    while randint(1, mutation_chance) == 1:
+    if randint(1, mutation_chance) == 1:
         start = randint(0, len(chromosome)-200)
         stop = randint(start+200, len(chromosome))
         chromosome = chromosome[:start] + ''.join([str((int(char)-1)**2) for char in chromosome[start:stop]]) + chromosome[stop:]
     return chromosome
 
 def evolve(ssims):
-    survivors = [org[0] for org in sorted(ssims, key=itemgetter(1))[int(len(ssims)/2):]]
+    pop_size = len(ssims)
+    survivors = [org[0] for org in sorted(ssims, key=itemgetter(1))[int(pop_size*0.8):]]
 
     new_population = []
     for survivor in survivors:
         new = Organism(genome_size)
         new.chromosome = survivor
         new_population.append(new)
+    #shuffle(survivors)
 
-    shuffle(survivors)
-    for i in range(0, len(survivors), 2):
-        midpoint = randint(0, len(survivors[i]))
+    while len(new_population) < pop_size:
         new = Organism(genome_size)
-        new.chromosome = mutate(survivors[i][midpoint:] + survivors[i+1][:midpoint])
-        new_population.append(new)
-
-        midpoint = randint(0, len(survivors[i]))
-        new = Organism(genome_size)
-        new.chromosome = mutate(survivors[i+1][midpoint:] + survivors[i][:midpoint])
+        survivor = choice(survivors)
+        new.chromosome = mutate(survivor)
         new_population.append(new)
 
     return new_population
@@ -101,7 +97,7 @@ def init(population_size, genome_size):
     return population
 
 def main(population):
-    for gen in range(1000):
+    for gen in range(10000):
         ssims = []
         for org in population:
             img = np.copy(blank)
@@ -112,18 +108,19 @@ def main(population):
 
         ssims = sorted(ssims, key=itemgetter(1))[::-1]
         print(f"Gen {gen}: {round(ssims[0][1], 5)} (diff: {round(ssims[0][1]-ssims[-1][1], 5)})")
+        if gen % 100 == 0: cv2.imwrite(f'{round(ssims[0][1],5)}.jpg', create_image(assemble_from_chromosome(ssims[0][0]), np.copy(blank)))
         population = evolve(ssims)
 
     return ssims
 
-source = cv2.resize(cv2.imread('input.jpg'), (0,0), fx=0.25, fy=0.25)
+source = cv2.resize(cv2.imread('input.jpg'), (0,0), fx=0.2, fy=0.2)
 blank = np.zeros((source.shape[0],source.shape[1],3), np.uint8)
 blank[:] = (255,255,255)
-mutation_chance = 2
-genome_size = 40
-population_size =  40
+mutation_chance = 1
+genome_size = 80
+population_size =  100
 population = init(population_size, genome_size)
 ssims = main(population)
 
-#cv2.imshow('',assemble_from_chromosome(ssims[0][0], np.copy(blank)))
-#cv2.waitKey(0)
+cv2.imshow(f"ssims[0][1]", create_image(assemble_from_chromosome(ssims[0][0]), np.copy(blank)))
+cv2.waitKey(0)
